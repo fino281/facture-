@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Facture express</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;600;800&display=swap">
+<style>
+:root{--bg:#EEF2F6;--panel:#fff;--ink:#14213D;--muted:#5B6B83;--line:#CBD5E1;--accent:#1D4ED8;--accent-ink:#fff;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0E1626;--panel:#16213A;--ink:#E6ECF5;--muted:#93A3BD;--line:#2B3A57;--accent:#6EA0FF;--accent-ink:#0E1626}}
+:root[data-theme="dark"]{--bg:#0E1626;--panel:#16213A;--ink:#E6ECF5;--muted:#93A3BD;--line:#2B3A57;--accent:#6EA0FF;--accent-ink:#0E1626}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Bricolage Grotesque",system-ui,-apple-system,"Segoe UI",sans-serif;line-height:1.5}
+h1{font-size:clamp(2rem,6vw,3.2rem);font-weight:800;letter-spacing:-.03em;line-height:1;margin:0 0 .5rem}
+header{padding:2rem 1.25rem 1rem;max-width:1100px;margin:0 auto}
+header p{margin:0;color:var(--muted);max-width:52ch}
+main{display:grid;gap:1.5rem;padding:1rem 1.25rem 3rem;max-width:1100px;margin:0 auto}
+@media(min-width:900px){main{grid-template-columns:minmax(0,420px) minmax(0,1fr);align-items:start}}
+form{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:1.25rem;display:grid;gap:.75rem}
+fieldset{border:0;padding:0;margin:0;display:grid;gap:.5rem}
+legend{font-weight:800;margin-bottom:.25rem;padding:0}
+label{display:grid;gap:.2rem;font-size:.85rem;color:var(--muted)}
+input,textarea,select{font:inherit;color:var(--ink);background:transparent;border:1px solid var(--line);border-radius:8px;padding:.55rem .65rem;width:100%}
+input:focus-visible,textarea:focus-visible,select:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:.5rem}
+.line{display:grid;grid-template-columns:1fr 4rem 5.5rem auto;gap:.4rem;align-items:end}
+.line button{height:2.4rem}
+button{font:inherit;font-weight:600;border-radius:8px;border:1px solid var(--line);background:transparent;color:var(--ink);padding:.5rem .9rem;cursor:pointer}
+button.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent);padding:.75rem 1rem;font-size:1rem}
+.sheet-wrap{overflow-x:auto}
+.sheet{background:#fff;color:#14213D;min-width:520px;border-radius:4px;padding:2.2rem;box-shadow:0 0 0 1px var(--line),8px 8px 0 var(--accent);font-size:.92rem}
+.sheet h2{margin:0;font-size:2rem;font-weight:800;letter-spacing:-.02em}
+.sheet .meta{display:flex;justify-content:space-between;gap:1rem;margin:1rem 0 1.5rem;flex-wrap:wrap}
+.sheet .who{white-space:pre-line}
+.sheet small{color:#5B6B83;display:block}
+.sheet table{width:100%;border-collapse:collapse;margin-top:1rem}
+.sheet th{text-align:left;border-bottom:2px solid #14213D;padding:.4rem 0;font-weight:600}
+.sheet td{padding:.5rem 0;border-bottom:1px solid #E2E8F0;vertical-align:top}
+.sheet .n{text-align:right;white-space:nowrap}
+.sheet .tot{margin:1rem 0 0 auto;width:min(100%,16rem)}
+.sheet .tot div{display:flex;justify-content:space-between;padding:.2rem 0}
+.sheet .tot .big{font-weight:800;font-size:1.2rem;border-top:2px solid #14213D;margin-top:.3rem;padding-top:.5rem}
+.sheet .foot{margin-top:1.5rem;font-size:.8rem;color:#5B6B83;white-space:pre-line}
+.actions{display:flex;gap:.5rem;margin-top:1rem;flex-wrap:wrap}
+#support{margin-top:1rem;font-size:.85rem;color:var(--muted)}
+#support a{color:var(--accent);font-weight:600}
+@media print{body{background:#fff}header,form,.actions,#support{display:none}main{display:block;padding:0}.sheet{box-shadow:none;min-width:0;padding:0}}
+</style>
+</head>
+<body>
+<header>
+<h1>Facture express</h1>
+<p>Remplis les champs, la facture se met en forme toute seule. Imprime-la ou enregistre-la en PDF.</p>
+</header>
+<main>
+<form id="f" onsubmit="return false">
+<fieldset><legend>Ton activité</legend>
+<label>Nom ou raison sociale<input id="me" value="Camille Martin EI"></label>
+<label>Adresse et SIRET<textarea id="meAddr" rows="3">12 rue des Lilas, 69003 Lyon
+SIRET 000 000 000 00000</textarea></label>
+</fieldset>
+<fieldset><legend>Ton client</legend>
+<label>Nom<input id="cl" value="Atelier Rivage"></label>
+<label>Adresse<textarea id="clAddr" rows="2">8 quai Saint-Antoine, 69002 Lyon</textarea></label>
+</fieldset>
+<fieldset><legend>Facture</legend>
+<div class="row">
+<label>Numéro<input id="num" value="2026-001"></label>
+<label>Date<input id="date" type="date"></label>
+</div>
+<label>TVA<select id="tva"><option value="0">Non applicable (micro-entreprise)</option><option value="20">20 %</option><option value="10">10 %</option><option value="5.5">5,5 %</option></select></label>
+</fieldset>
+<fieldset><legend>Prestations</legend>
+<div id="lines"></div>
+<button type="button" id="add">Ajouter une ligne</button>
+</fieldset>
+<label>Mentions de paiement<textarea id="note" rows="3">Paiement à 30 jours par virement.
+IBAN : à compléter</textarea></label>
+<button class="primary" id="print" type="button">Imprimer / Enregistrer en PDF</button>
+</form>
+
+<section>
+<div class="sheet-wrap"><article class="sheet" id="sheet" aria-live="polite"></article></div>
+<p id="support" hidden></p>
+</section>
+</main>
+<script>
+(function(){
+var PAY_LINK = ""; // colle ici ton lien de paiement ou de don pour afficher un bouton de soutien
+var $ = function(id){return document.getElementById(id)};
+var eur = new Intl.NumberFormat("fr-FR",{style:"currency",currency:"EUR"});
+var lines = [{d:"Création de logo",q:1,p:450},{d:"Déclinaisons réseaux sociaux",q:3,p:60}];
+try{var s=localStorage.getItem("facture-express");if(s){var o=JSON.parse(s);if(o&&o.lines)lines=o.lines;if(o&&o.f)Object.keys(o.f).forEach(function(k){if($(k))$(k).value=o.f[k]})}}catch(e){}
+if(!$("date").value)$("date").value=new Date().toISOString().slice(0,10);
+
+function el(t,c,x){var e=document.createElement(t);if(c)e.className=c;if(x!==undefined)e.textContent=x;return e}
+
+function renderLines(){
+  var box=$("lines");box.textContent="";
+  lines.forEach(function(l,i){
+    var r=el("div","line");
+    [["Description","d","text"],["Qté","q","number"],["Prix €","p","number"]].forEach(function(c){
+      var lab=el("label",null,c[0]);var inp=el("input");inp.type=c[2];inp.value=l[c[1]];
+      if(c[2]==="number"){inp.min="0";inp.step="any"}
+      inp.addEventListener("input",function(){l[c[1]]=c[2]==="number"?parseFloat(inp.value)||0:inp.value;draw()});
+      lab.appendChild(inp);r.appendChild(lab)});
+    var b=el("button",null,"×");b.type="button";b.setAttribute("aria-label","Supprimer la ligne");
+    b.addEventListener("click",function(){lines.splice(i,1);renderLines();draw()});
+    r.appendChild(b);box.appendChild(r)});
+}
+
+function draw(){
+  var rate=parseFloat($("tva").value)||0, ht=0;
+  lines.forEach(function(l){ht+=(l.q||0)*(l.p||0)});
+  var tv=ht*rate/100, sh=$("sheet");sh.textContent="";
+  sh.appendChild(el("h2",null,"Facture n° "+$("num").value));
+  var d=$("date").value?new Date($("date").value+"T12:00:00").toLocaleDateString("fr-FR"):"";
+  var meta=el("div","meta");
+  var a=el("div","who");a.appendChild(el("strong",null,$("me").value));a.appendChild(document.createTextNode("\n"+$("meAddr").value));
+  var b=el("div","who");b.appendChild(el("small",null,"Facturé à"));b.appendChild(el("strong",null,$("cl").value));b.appendChild(document.createTextNode("\n"+$("clAddr").value));
+  var c=el("div");c.appendChild(el("small",null,"Date"));c.appendChild(el("strong",null,d));
+  meta.appendChild(a);meta.appendChild(b);meta.appendChild(c);sh.appendChild(meta);
+  var t=el("table"),hr=el("tr");
+  ["Description","Qté","Prix unitaire","Total"].forEach(function(h,i){var th=el("th",i?"n":"",h);hr.appendChild(th)});
+  var th=el("thead");th.appendChild(hr);t.appendChild(th);
+  var tb=el("tbody");
+  lines.forEach(function(l){var r=el("tr");
+    r.appendChild(el("td",null,l.d));r.appendChild(el("td","n",String(l.q||0)));
+    r.appendChild(el("td","n",eur.format(l.p||0)));r.appendChild(el("td","n",eur.format((l.q||0)*(l.p||0))));tb.appendChild(r)});
+  t.appendChild(tb);sh.appendChild(t);
+  var tot=el("div","tot");
+  function row(k,v,cls){var r=el("div",cls);r.appendChild(el("span",null,k));r.appendChild(el("span",null,v));tot.appendChild(r)}
+  row(rate?"Total HT":"Sous-total",eur.format(ht));
+  if(rate)row("TVA "+rate.toString().replace(".",",")+" %",eur.format(tv));
+  row(rate?"Total TTC":"Total à payer",eur.format(ht+tv),"big");
+  sh.appendChild(tot);
+  var foot=$("note").value+(rate?"":"\nTVA non applicable, art. 293 B du CGI.");
+  sh.appendChild(el("div","foot",foot));
+  try{var f={};["me","meAddr","cl","clAddr","num","date","tva","note"].forEach(function(k){f[k]=$(k).value});
+    localStorage.setItem("facture-express",JSON.stringify({lines:lines,f:f}))}catch(e){}
+}
+
+["me","meAddr","cl","clAddr","num","date","tva","note"].forEach(function(k){$(k).addEventListener("input",draw);$(k).addEventListener("change",draw)});
+$("add").addEventListener("click",function(){lines.push({d:"",q:1,p:0});renderLines();draw()});
+$("print").addEventListener("click",function(){window.print()});
+if(PAY_LINK){var s=$("support");s.hidden=false;s.appendChild(document.createTextNode("Cet outil t'a fait gagner du temps ? "));
+  var l=el("a",null,"Soutiens-le ici");l.href=PAY_LINK;l.rel="noopener";s.appendChild(l)}
+renderLines();draw();
+})();
+</script>
+</body>
+</html>
